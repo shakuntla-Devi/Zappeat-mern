@@ -32,7 +32,7 @@ const Signup = () => {
         form
       );
 
-
+      console.log("API URL:", API);
       localStorage.setItem("token", res.data.token);
 
       // ✅ SAVE USER

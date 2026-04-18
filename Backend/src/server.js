@@ -22,10 +22,12 @@ const app = express();
 //  MIDDLEWARE
 app.use(express.json());
 app.use(cors({
-  origin:[
+  origin: [
     " http://localhost:5173",
     "https://zappeat-mern.vercel.app"
-  ]
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
 }));
 
 //  STATIC FILES (images)
