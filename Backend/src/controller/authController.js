@@ -7,17 +7,14 @@ export const registerUser = async (req, res) => {
   try {
     const { name, email, password, gender } = req.body;
 
-    // check user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "User already exists ❌" });
     }
 
-    // 🔥 HASH PASSWORD
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // create user
     const user = await User.create({
       name,
       email,
@@ -25,15 +22,19 @@ export const registerUser = async (req, res) => {
       gender,
     });
 
-    // 🔥 TOKEN
     const token = jwt.sign(
       { id: user._id, role: "client" },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
-    // 🔥 REMOVE PASSWORD
-    const { password: pass, ...safeUser } = user._doc;
+    // ✅ YAHAN LIKHNA HAI (IMPORTANT 🔥)
+    const safeUser = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      gender: user.gender
+    };
 
     res.status(201).json({
       message: "User registered successfully ✅",
@@ -48,7 +49,7 @@ export const registerUser = async (req, res) => {
 };
 
 // ✅ LOGIN
-export const loginUser = async (req, res) => {
+export const loginUser = async (req, res) => { 
   try {
     const { email, password } = req.body;
 
@@ -73,8 +74,13 @@ export const loginUser = async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    // 🔥 REMOVE PASSWORD
-    const { password: pass, ...safeUser } = user._doc;
+    // ✅ SAFE USER (FINAL FIX 🔥)
+    const safeUser = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      gender: user.gender
+    };
 
     res.json({
       user: safeUser,
