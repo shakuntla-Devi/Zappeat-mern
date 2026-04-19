@@ -43,8 +43,8 @@ export const registerUser = async (req, res) => {
     });
 
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Server error ❌" });
+    console.log("REGISTER ERROR:", error);
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -88,7 +88,7 @@ export const loginUser = async (req, res) => {
     });
 
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Login error ❌" });
+    console.log("LOGIN ERROR:", error);
+    res.status(500).json({ message: error.message });
   }
 };
