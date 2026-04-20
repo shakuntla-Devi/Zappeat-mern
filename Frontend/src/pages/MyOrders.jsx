@@ -72,7 +72,8 @@ const MyOrders = () => {
             <p>👤 {order.user?.name || user?.name}</p>
 
             <p>
-              📍 {order.address?.address}, {order.address?.city}
+              📍 {order.address?.address || "No Address"}
+              {order.address?.city ? `, ${order.address.city}` : ""}
             </p>
 
             {order.items?.map((item, i) => (
@@ -82,7 +83,7 @@ const MyOrders = () => {
             ))}
 
             <h3 className="text-red-500 font-bold">
-              Total: ₹{order.total}
+             Total: ₹{order.totalAmount || 0}
             </h3>
 
           </div>
