@@ -5,8 +5,7 @@ import axios from "axios";
 
 const Checkout = () => {
   const navigate = useNavigate();
-
-  const API = import.meta.env.VITE_API_URL; // ✅ ENV ADD
+  const API = import.meta.env.VITE_API_URL;
 
   const [cart, setCart] = useState([]);
 
@@ -17,7 +16,7 @@ const Checkout = () => {
     city: "",
   });
 
-  //  LOAD CART
+  // ✅ LOAD CART
   useEffect(() => {
     let data = JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -30,12 +29,12 @@ const Checkout = () => {
     setCart(fixed);
   }, []);
 
-  //  TOTAL
+  // ✅ TOTAL CALCULATION
   const total = cart.reduce((acc, item) => {
     return acc + item.price * item.qty;
   }, 0);
 
-  //  ORDER FUNCTION
+  // ✅ ORDER FUNCTION
   const handleOrder = async (e) => {
     e.preventDefault();
 
@@ -56,11 +55,14 @@ const Checkout = () => {
 
     try {
       await axios.post(
-        `${API}/api/orders/place`, // ✅ FIXED
+        `${API}/api/orders/place`,
         {
           items: cart,
-          address,
-          total,
+          address: {
+            address: address.address,
+            city: address.city,
+          },
+          totalAmount: total, // ✅ FINAL FIX
         },
         {
           headers: {
@@ -72,7 +74,6 @@ const Checkout = () => {
       localStorage.removeItem("cart");
 
       toast.success("Order placed 🎉");
-
       navigate("/success");
 
     } catch (err) {
@@ -90,9 +91,10 @@ const Checkout = () => {
 
       <div className="grid lg:grid-cols-2 gap-10 max-w-6xl mx-auto">
 
+        {/* 📝 FORM */}
         <form
           onSubmit={handleOrder}
-          className="bg-white rounded-3xl shadow-xl p-8 space-y-5 hover:shadow-2xl transition"
+          className="bg-white rounded-3xl shadow-xl p-8 space-y-5"
         >
           <h2 className="text-xl font-bold mb-2">
             Delivery Details 📍
@@ -130,9 +132,10 @@ const Checkout = () => {
             }
           />
 
-         
+          
         </form>
 
+        {/* 🛒 ORDER SUMMARY */}
         <div className="bg-white rounded-3xl shadow-xl p-8 flex flex-col justify-between">
 
           <div>
@@ -168,13 +171,6 @@ const Checkout = () => {
               <span className="text-red-500 text-xl">₹{total}</span>
             </div>
           </div>
-
-          <button
-            onClick={handleOrder}
-            className="w-full mt-6 bg-gradient-to-r from-green-500 to-green-600 text-white py-3 rounded-xl hover:scale-105 transition font-semibold"
-          >
-            Pay Now 💳
-          </button>
 
         </div>
       </div>
