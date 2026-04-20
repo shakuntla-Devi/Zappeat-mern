@@ -1,13 +1,9 @@
 import Order from "../models/orderModel.js";
-
 export const placeOrder = async (req, res) => {
   try {
     const order = new Order({
       ...req.body,
-      user: {
-        name: req.user.name,
-        email: req.user.email,
-      },
+      user: req.user.id, // ✅ yaha change
     });
 
     await order.save();
@@ -23,12 +19,29 @@ export const placeOrder = async (req, res) => {
       message: "Error placing order",
     });
   }
-};
+}
 
 // 📥 GET ALL ORDERS (Admin)
 export const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find().sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      orders,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Error fetching orders",
+    });
+  }
+};
+
+export const getMyOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({ user: req.user.id })
+      .populate("user", "name email")
+      .sort({ createdAt: -1 });
 
     res.json({
       success: true,

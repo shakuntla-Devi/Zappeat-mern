@@ -11,32 +11,19 @@ const MyOrders = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const token = localStorage.getItem("token");
 
-  // ✅ FETCH ORDERS
+  // ✅ FETCH ORDERS (UPDATED)
   const fetchOrders = async () => {
     try {
-      const res = await axios.get(`${API}/api/orders`, {
+      const res = await axios.get(`${API}/api/orders/my-orders`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      console.log("ORDERS:", res.data.orders);
-      console.log("USER:", user);
+      console.log("MY ORDERS:", res.data.orders);
 
-      // 🔥 STRONG FILTER (handles all cases)
-      const myOrders = res.data.orders.filter((order) => {
-        if (!order.user || !user?._id) return false;
-
-        // case 1: populated object
-        if (typeof order.user === "object") {
-          return order.user._id?.toString() === user._id?.toString();
-        }
-
-        // case 2: string id
-        return order.user.toString() === user._id?.toString();
-      });
-
-      setOrders(myOrders);
+      // ✅ direct set (NO FILTER)
+      setOrders(res.data.orders);
 
     } catch (err) {
       console.log(err);
@@ -76,32 +63,26 @@ const MyOrders = () => {
         orders.map((order) => (
           <div key={order._id} className="bg-white p-4 mb-4 rounded shadow">
 
-            {/* ✅ DATE FIX */}
             <p className="text-sm text-gray-500">
               📅 {order.createdAt
                 ? new Date(order.createdAt).toLocaleString()
                 : "No Date"}
             </p>
 
-            {/* ✅ USER NAME */}
-            <p>👤 {order.user?.name || user?.name || "User"}</p>
+            <p>👤 {order.user?.name || user?.name}</p>
 
-            {/* ✅ ADDRESS */}
             <p>
-              📍 {order.address?.address || "No Address"},{" "}
-              {order.address?.city || ""}
+              📍 {order.address?.address}, {order.address?.city}
             </p>
 
-            {/* ✅ ITEMS */}
             {order.items?.map((item, i) => (
               <p key={i}>
                 🍔 {item.name} - ₹{item.price} × {item.qty || 1}
               </p>
             ))}
 
-            {/* ✅ TOTAL */}
             <h3 className="text-red-500 font-bold">
-              Total: ₹{order.total || 0}
+              Total: ₹{order.total}
             </h3>
 
           </div>

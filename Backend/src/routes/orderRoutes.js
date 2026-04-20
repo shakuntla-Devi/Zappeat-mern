@@ -1,13 +1,16 @@
 import express from "express";
-import { placeOrder, getAllOrders } from "../controller/orderController.js";
+import { placeOrder, getMyOrders, getAllOrders } from "../controller/orderController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// only logged-in user can place order
+// ✅ place order
 router.post("/place", protect, placeOrder);
 
-//  only logged-in user can see orders
-router.get("/", protect, getAllOrders);
+// ✅ user ke liye (My Orders)
+router.get("/my-orders", protect, getMyOrders);
+
+// ✅ admin ke liye (optional)
+router.get("/all", protect, getAllOrders);
 
 export default router;
