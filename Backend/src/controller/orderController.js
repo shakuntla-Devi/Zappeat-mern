@@ -3,9 +3,16 @@ import Order from "../models/orderModel.js";
 
 export const placeOrder = async (req, res) => {
   try {
+    const { items, address, totalAmount } = req.body;
+
     const order = new Order({
-      ...req.body,
-      user: req.user._id, // ✅ yaha change
+      items: items || [],
+      address: {
+        address: address?.address || "",
+        city: address?.city || "",
+      },
+      totalAmount: totalAmount || 0,
+      user: req.user._id,
     });
 
     await order.save();
@@ -21,7 +28,7 @@ export const placeOrder = async (req, res) => {
       message: "Error placing order",
     });
   }
-}
+};
 
 // 📥 GET ALL ORDERS (Admin)
 export const getAllOrders = async (req, res) => {

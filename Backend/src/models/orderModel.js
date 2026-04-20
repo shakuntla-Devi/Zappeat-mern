@@ -16,6 +16,13 @@ const orderSchema = new mongoose.Schema(
       },
     ],
 
+    // 🔥 ADD THIS (city fix ke liye)
+    address: {
+      address: String,
+      city: String,
+    },
+
+    // 🔥 already hai but ensure use ho raha
     totalAmount: Number,
   },
   { timestamps: true }
