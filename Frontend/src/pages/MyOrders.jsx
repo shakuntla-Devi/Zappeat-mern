@@ -20,10 +20,15 @@ const MyOrders = () => {
         },
       });
 
-      console.log("ORDERS:", res.data.orders); // debug
+      console.log("ORDERS:", res.data.orders);
+      console.log("USER:", user);
 
-      // ❌ filter hata diya (main fix)
-      setOrders(res.data.orders);
+      // ✅ FILTER ONLY LOGGED-IN USER ORDERS
+      const myOrders = res.data.orders.filter(
+        (order) => order.user?._id === user?._id || order.user === user?._id
+      );
+
+      setOrders(myOrders);
 
     } catch (err) {
       console.log(err);
@@ -31,7 +36,7 @@ const MyOrders = () => {
     }
   };
 
-  // ✅ FETCH MESSAGES (local)
+  // ✅ FETCH MESSAGES
   const fetchMessages = () => {
     const allMsgs = JSON.parse(localStorage.getItem("messages")) || [];
 
@@ -63,24 +68,30 @@ const MyOrders = () => {
         orders.map((order) => (
           <div key={order._id} className="bg-white p-4 mb-4 rounded shadow">
 
+            {/* ✅ DATE FIX */}
             <p className="text-sm text-gray-500">
-              📅 {new Date(order.date).toLocaleString()}
+              📅 {order.createdAt ? new Date(order.createdAt).toLocaleString() : "No Date"}
             </p>
 
-            <p>👤 {order.user?.name || "User"}</p>
+            {/* ✅ USER NAME FIX */}
+            <p>👤 {order.user?.name || user?.name || "User"}</p>
 
+            {/* ✅ ADDRESS SAFE */}
             <p>
-              📍 {order.address?.address}, {order.address?.city}
+              📍 {order.address?.address || "No Address"},{" "}
+              {order.address?.city || ""}
             </p>
 
+            {/* ✅ ITEMS */}
             {order.items?.map((item, i) => (
               <p key={i}>
                 🍔 {item.name} - ₹{item.price} × {item.qty || 1}
               </p>
             ))}
 
+            {/* ✅ TOTAL */}
             <h3 className="text-red-500 font-bold">
-              Total: ₹{order.total}
+              Total: ₹{order.total || 0}
             </h3>
 
           </div>
