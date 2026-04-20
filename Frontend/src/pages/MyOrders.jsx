@@ -23,10 +23,18 @@ const MyOrders = () => {
       console.log("ORDERS:", res.data.orders);
       console.log("USER:", user);
 
-      // ✅ FILTER ONLY LOGGED-IN USER ORDERS
-      const myOrders = res.data.orders.filter(
-        (order) => order.user?._id === user?._id || order.user === user?._id
-      );
+      // 🔥 STRONG FILTER (handles all cases)
+      const myOrders = res.data.orders.filter((order) => {
+        if (!order.user || !user?._id) return false;
+
+        // case 1: populated object
+        if (typeof order.user === "object") {
+          return order.user._id?.toString() === user._id?.toString();
+        }
+
+        // case 2: string id
+        return order.user.toString() === user._id?.toString();
+      });
 
       setOrders(myOrders);
 
@@ -70,13 +78,15 @@ const MyOrders = () => {
 
             {/* ✅ DATE FIX */}
             <p className="text-sm text-gray-500">
-              📅 {order.createdAt ? new Date(order.createdAt).toLocaleString() : "No Date"}
+              📅 {order.createdAt
+                ? new Date(order.createdAt).toLocaleString()
+                : "No Date"}
             </p>
 
-            {/* ✅ USER NAME FIX */}
+            {/* ✅ USER NAME */}
             <p>👤 {order.user?.name || user?.name || "User"}</p>
 
-            {/* ✅ ADDRESS SAFE */}
+            {/* ✅ ADDRESS */}
             <p>
               📍 {order.address?.address || "No Address"},{" "}
               {order.address?.city || ""}
