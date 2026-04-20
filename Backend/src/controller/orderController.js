@@ -1,9 +1,15 @@
 import Order from "../models/orderModel.js";
 
-// 📦 SAVE ORDER
 export const placeOrder = async (req, res) => {
   try {
-    const order = new Order(req.body);
+    const order = new Order({
+      ...req.body,
+      user: {
+        name: req.user.name,
+        email: req.user.email,
+      },
+    });
+
     await order.save();
 
     res.status(201).json({
@@ -11,6 +17,7 @@ export const placeOrder = async (req, res) => {
       message: "Order placed successfully",
     });
   } catch (err) {
+    console.log(err);
     res.status(500).json({
       success: false,
       message: "Error placing order",
