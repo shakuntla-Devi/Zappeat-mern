@@ -1,9 +1,11 @@
 import Order from "../models/orderModel.js";
+
+
 export const placeOrder = async (req, res) => {
   try {
     const order = new Order({
       ...req.body,
-      user: req.user.id, // ✅ yaha change
+      user: req.user._id, // ✅ yaha change
     });
 
     await order.save();
@@ -39,7 +41,7 @@ export const getAllOrders = async (req, res) => {
 
 export const getMyOrders = async (req, res) => {
   try {
-    const orders = await Order.find({ user: req.user.id })
+    const orders = await Order.find({ user: req.user._id })
       .populate("user", "name email")
       .sort({ createdAt: -1 });
 
