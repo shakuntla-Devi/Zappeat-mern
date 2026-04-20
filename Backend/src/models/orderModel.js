@@ -3,9 +3,11 @@ import mongoose from "mongoose";
 const orderSchema = new mongoose.Schema(
   {
     user: {
-      name: String,
-      email: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
+
     items: [
       {
         name: String,
@@ -13,9 +15,10 @@ const orderSchema = new mongoose.Schema(
         qty: Number,
       },
     ],
+
     totalAmount: Number,
   },
-  { timestamps: true } // 🔥 IMPORTANT (date ke liye)
+  { timestamps: true }
 );
 
 export default mongoose.model("Order", orderSchema);
