@@ -41,10 +41,11 @@ export const getAllOrders = async (req, res) => {
 
 export const getMyOrders = async (req, res) => {
   try {
+    console.log("REQ.USER:", req.user);
     const orders = await Order.find({ user: req.user._id })
       .populate("user", "name email")
       .sort({ createdAt: -1 });
-
+    console.log("FOUND ORDERS:", orders);
     res.json({
       success: true,
       orders,
