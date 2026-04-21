@@ -29,14 +29,14 @@ const Checkout = () => {
     setCart(fixed);
   }, []);
 
-  // ✅ TOTAL CALCULATION
+  // ✅ TOTAL
   const total = cart.reduce((acc, item) => {
     return acc + item.price * item.qty;
   }, 0);
 
   // ✅ ORDER FUNCTION
   const handleOrder = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
 
     const token = localStorage.getItem("token");
 
@@ -62,7 +62,7 @@ const Checkout = () => {
             address: address.address,
             city: address.city,
           },
-          totalAmount: total, // ✅ FINAL FIX
+          totalAmount: total, // ✅ FIXED
         },
         {
           headers: {
@@ -132,7 +132,7 @@ const Checkout = () => {
             }
           />
 
-          
+         
         </form>
 
         {/* 🛒 ORDER SUMMARY */}
@@ -171,6 +171,14 @@ const Checkout = () => {
               <span className="text-red-500 text-xl">₹{total}</span>
             </div>
           </div>
+
+          {/* ✅ PAY NOW BUTTON */}
+          <button
+            onClick={handleOrder}
+            className="w-full mt-6 bg-gradient-to-r from-green-500 to-green-600 text-white py-3 rounded-xl hover:scale-105 transition font-semibold"
+          >
+            Pay Now 💳
+          </button>
 
         </div>
       </div>
